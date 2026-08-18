@@ -52,11 +52,33 @@ def _row_to_dict(row) -> dict:
 
 if PG:
 
+    class _PsycopgConn:
+        """psycopg3 wrapper that translates ? placeholders -> %s on every execute,
+        so raw SQL (seed.py etc.) works identically in both DB modes."""
+
+        def __init__(self, conn):
+            self._conn = conn
+
+        def __enter__(self):
+            self._conn.__enter__()
+            return self
+
+        def __exit__(self, *args):
+            return self._conn.__exit__(*args)
+
+        def execute(self, sql, params=None):
+            if params is not None:
+                sql = _sql(sql)
+            return self._conn.execute(sql, params)
+
+        def __getattr__(self, name):
+            return getattr(self._conn, name)
+
     @contextmanager
     def get_conn():
         conn = psycopg.connect(os.environ["DATABASE_URL"], row_factory=dict_row)
         try:
-            yield conn
+            yield _PsycopgConn(conn)
             conn.commit()
         finally:
             conn.close()
