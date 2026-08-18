@@ -44,7 +44,7 @@ export function AppShell() {
               <ActivityIcon className="h-4 w-4" />
             </span>
             <span className="min-w-0">
-              <span className="block truncate font-display text-[15px] leading-tight text-white">Locutus SLP</span>
+              <span className="block truncate font-display text-[15px] leading-tight text-white">VaniCare</span>
               <span className="block truncate text-[11px] leading-tight text-white/70">{theme.label}</span>
             </span>
           </Link>

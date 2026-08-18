@@ -1,4 +1,4 @@
-"""Locutus SLP API — FastAPI entrypoint.
+"""VaniCare API — FastAPI entrypoint.
 
 Boot sequence: init schema -> seed demo world (once) -> serve.
 """
@@ -15,13 +15,13 @@ from .routers import auth, bootstrap, cases, patients, plans, records, reports, 
 async def lifespan(_app: FastAPI):
     db.init_db()
     if seed.seed_if_empty():
-        print("[locutus-slp] Seeded demo world (users: admin@locutus.in / riya@locutus.in / "
-              "kabir@locutus.in / ananya@locutus.in / sen@locutus.in, password: locutus123)")
+        print("[vanicare] Seeded demo world (users: admin@vanicare.in / riya@vanicare.in / "
+              "kabir@vanicare.in / ananya@vanicare.in / sen@vanicare.in, password: vanicare123)")
     yield
 
 
 app = FastAPI(
-    title="Locutus SLP API",
+    title="VaniCare API",
     version="1.0.0",
     description="Digital clinical management and supervision system for speech-language therapy (SIH PS-SW-008).",
     lifespan=lifespan,
@@ -47,4 +47,4 @@ app.include_router(records.router)
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "service": "locutus-slp", "db": db.DB_PATH}
+    return {"ok": True, "service": "vanicare", "db": db.DB_PATH}

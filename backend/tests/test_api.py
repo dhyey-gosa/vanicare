@@ -9,21 +9,21 @@ from pathlib import Path
 BACKEND = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BACKEND))
 
-os.environ["LOCUTUS_DB"] = str(BACKEND / "test_locutus.db")
+os.environ["VANICARE_DB"] = str(BACKEND / "test_vanicare.db")
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.main import app  # noqa: E402
 
-DEMO = "locutus123"
+DEMO = "vanicare123"
 
 
 @pytest.fixture(scope="module")
 def client():
     """Enter the app context so the lifespan (schema init + seed) runs,
     exactly like uvicorn does in production."""
-    db_path = Path(os.environ["LOCUTUS_DB"])
+    db_path = Path(os.environ["VANICARE_DB"])
     if db_path.exists():
         db_path.unlink()
     with TestClient(app) as c:
@@ -43,18 +43,18 @@ def test_health(client):
 
 
 def test_login_bad_password(client):
-    r = client.post("/api/auth/login", json={"email": "admin@locutus.in", "password": "wrong"})
+    r = client.post("/api/auth/login", json={"email": "admin@vanicare.in", "password": "wrong"})
     assert r.status_code == 401
 
 
 def test_bootstrap_shapes(client):
-    h = auth(client, "admin@locutus.in")
+    h = auth(client, "admin@vanicare.in")
     r = client.get("/api/bootstrap", headers=h)
     assert r.status_code == 200
     body = r.json()
     for key in ("users", "patients", "cases", "plans", "sessions", "reports", "records", "requirement"):
         assert key in body
-    assert any(u["email"] == "riya@locutus.in" for u in body["users"])
+    assert any(u["email"] == "riya@vanicare.in" for u in body["users"])
     aarav = next(c for c in body["cases"] if c["reference"] == "SLP-2026-001")
     assert aarav["status"] == "Active"
     assert aarav["therapistId"] and aarav["supervisorId"]
@@ -71,15 +71,15 @@ def test_bootstrap_shapes(client):
 
 
 def test_register_duplicate_email(client):
-    h = auth(client, "admin@locutus.in")
+    h = auth(client, "admin@vanicare.in")
     r = client.post("/api/auth/register", json={
-        "name": "Dup User", "email": "ADMIN@locutus.in", "password": "secret1", "role": "THERAPIST",
+        "name": "Dup User", "email": "ADMIN@vanicare.in", "password": "secret1", "role": "THERAPIST",
     })
     assert r.status_code == 400
 
 
 def test_case_lifecycle(client):
-    admin = auth(client, "admin@locutus.in")
+    admin = auth(client, "admin@vanicare.in")
     r = client.post("/api/patients", headers=admin, json={
         "fullName": "Test Child", "age": "6", "gender": "Male", "status": "Active",
     })
@@ -111,7 +111,7 @@ def test_case_lifecycle(client):
     assert r.status_code == 409
 
     # therapist saves plan -> submits
-    riya = auth(client, "riya@locutus.in")
+    riya = auth(client, "riya@vanicare.in")
     r = client.put("/api/plans", headers=riya, json={
         "caseId": case["id"], "longTermGoals": ["LTG"], "shortTermGoals": ["STO"],
         "status": "Pending Supervisor Review", "totalSessions": 4,
@@ -122,12 +122,12 @@ def test_case_lifecycle(client):
     assert plan["submittedAt"] is not None
 
     # wrong supervisor cannot review
-    sen = auth(client, "sen@locutus.in")
+    sen = auth(client, "sen@vanicare.in")
     r = client.post(f"/api/plans/{plan['id']}/review", headers=sen, json={"approve": True})
     assert r.status_code == 403
 
     # right supervisor approves
-    ananya = auth(client, "ananya@locutus.in")
+    ananya = auth(client, "ananya@vanicare.in")
     r = client.post(f"/api/plans/{plan['id']}/review", headers=ananya, json={"approve": True})
     assert r.status_code == 200
     assert r.json()["status"] == "Approved"
@@ -171,9 +171,9 @@ def test_case_lifecycle(client):
 
 
 def test_plan_changes_requested_flow(client):
-    admin = auth(client, "admin@locutus.in")
-    ananya = auth(client, "ananya@locutus.in")
-    riya = auth(client, "riya@locutus.in")
+    admin = auth(client, "admin@vanicare.in")
+    ananya = auth(client, "ananya@vanicare.in")
+    riya = auth(client, "riya@vanicare.in")
 
     r = client.post("/api/patients", headers=admin, json={"fullName": "Flow Child"})
     pid = r.json()["id"]
@@ -199,8 +199,8 @@ def test_plan_changes_requested_flow(client):
 
 
 def test_records_and_requirement(client):
-    admin = auth(client, "admin@locutus.in")
-    riya = auth(client, "riya@locutus.in")
+    admin = auth(client, "admin@vanicare.in")
+    riya = auth(client, "riya@vanicare.in")
 
     r = client.put("/api/records/usr_riya", headers=riya, json={"directHours": 25, "indirectHours": 20})
     assert r.status_code == 200
@@ -222,7 +222,7 @@ def test_records_and_requirement(client):
 
 
 def test_events_and_notifications(client):
-    admin = auth(client, "admin@locutus.in")
+    admin = auth(client, "admin@vanicare.in")
     r = client.get("/api/cases/cas_aarav/events", headers=admin)
     assert r.status_code == 200
     types = [e["eventType"] for e in r.json()]

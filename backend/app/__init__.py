@@ -1,1 +1,1 @@
-"""Locutus SLP backend package."""
+"""VaniCare backend package."""

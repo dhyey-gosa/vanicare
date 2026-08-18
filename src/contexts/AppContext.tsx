@@ -1,8 +1,8 @@
 /**
- * Locutus SLP AppContext — server-backed state layer.
+ * VaniCare AppContext — server-backed state layer.
  *
  * Same public API as the original local-state provider, but every mutation is
- * persisted to the Locutus SLP backend (FastAPI) via src/api/client.ts and state
+ * persisted to the VaniCare backend (FastAPI) via src/api/client.ts and state
  * is reconciled from server responses. Login/register/addCase are async;
  * fire-and-forget mutations reconcile optimistically and toast failures.
  */
@@ -158,7 +158,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('locutus_token');
+    const token = localStorage.getItem('vanicare_token');
     if (token) {
       load().finally(() => setBootstrapping(false));
     } else {
@@ -197,7 +197,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem('locutus_token');
+    localStorage.removeItem('vanicare_token');
     api.logout().catch(() => undefined);
     clearState();
     setBootstrapping(false);

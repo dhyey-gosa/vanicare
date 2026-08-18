@@ -1,4 +1,4 @@
-# Locutus SLP — Digital Clinical Management & Supervision for Speech-Language Therapy
+# VaniCare — Digital Clinical Management & Supervision for Speech-Language Therapy
 
 Backend for **PS-SW-008** (SIH 2026). FastAPI + SQLite, zero cost, offline-capable.
 The API speaks the exact camelCase contract defined by the frontend
@@ -21,15 +21,15 @@ C:\Python314\python.exe run.py            # seeds on first run, serves on http:/
 
 Interactive docs: http://127.0.0.1:8000/docs
 
-## Demo accounts (password `locutus123` for all)
+## Demo accounts (password `vanicare123` for all)
 
 | Email             | Role       | Demo role in the story                 |
 |-------------------|------------|----------------------------------------|
-| admin@locutus.in | Admin      | Dr. Meera Kapoor                       |
-| riya@locutus.in  | Therapist  | Riya Mehta (Aarav's therapist)         |
-| kabir@locutus.in | Therapist  | Kabir Verma (workload context)         |
-| ananya@locutus.in| Supervisor | Dr. Ananya Rao (Aarav's supervisor)    |
-| sen@locutus.in   | Supervisor | Dr. Arjun Sen (workload context)       |
+| admin@vanicare.in | Admin      | Dr. Meera Kapoor                       |
+| riya@vanicare.in  | Therapist  | Riya Mehta (Aarav's therapist)         |
+| kabir@vanicare.in | Therapist  | Kabir Verma (workload context)         |
+| ananya@vanicare.in| Supervisor | Dr. Ananya Rao (Aarav's supervisor)    |
+| sen@vanicare.in   | Supervisor | Dr. Arjun Sen (workload context)       |
 
 ## Demo world (seeded once, idempotent)
 

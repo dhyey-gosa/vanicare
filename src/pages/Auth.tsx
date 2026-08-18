@@ -86,7 +86,7 @@ export function Auth() {
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
               <ActivityIcon className="h-4.5 w-4.5" />
             </span>
-            <span className="font-display text-lg">Locutus SLP</span>
+            <span className="font-display text-lg">VaniCare</span>
           </div>
           <h1 className="mt-10 max-w-md font-display text-3xl leading-snug sm:text-[38px]">
             Clinical management and supervision for speech-language therapy.

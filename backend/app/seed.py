@@ -1,4 +1,4 @@
-"""Demo seed. Loads the full Locutus SLP demo world:
+"""Demo seed. Loads the full VaniCare demo world:
 - 5 staff (admin, 2 therapists, 2 supervisors)
 - 7 patients / cases including the canonical Aarav Sharma journey
   (SLP-2026-001) with approved plan, 10 SOAP sessions, and a submitted
@@ -20,7 +20,7 @@ def _ms(date_str: str) -> int:
     return int(datetime.strptime(date_str, "%Y-%m-%d %H:%M").timestamp() * 1000)
 
 
-DEMO_PASSWORD = "locutus123"
+DEMO_PASSWORD = "vanicare123"
 
 COMPETENCIES = [
     "Clinical Documentation",
@@ -31,11 +31,11 @@ COMPETENCIES = [
 ]
 
 USERS = [
-    ("usr_admin", "Dr. Meera Kapoor", "admin@locutus.in", "ADMIN"),
-    ("usr_riya", "Riya Mehta", "riya@locutus.in", "THERAPIST"),
-    ("usr_kabir", "Kabir Verma", "kabir@locutus.in", "THERAPIST"),
-    ("usr_ananya", "Dr. Ananya Rao", "ananya@locutus.in", "SUPERVISOR"),
-    ("usr_sen", "Dr. Arjun Sen", "sen@locutus.in", "SUPERVISOR"),
+    ("usr_admin", "Dr. Meera Kapoor", "admin@vanicare.in", "ADMIN"),
+    ("usr_riya", "Riya Mehta", "riya@vanicare.in", "THERAPIST"),
+    ("usr_kabir", "Kabir Verma", "kabir@vanicare.in", "THERAPIST"),
+    ("usr_ananya", "Dr. Ananya Rao", "ananya@vanicare.in", "SUPERVISOR"),
+    ("usr_sen", "Dr. Arjun Sen", "sen@vanicare.in", "SUPERVISOR"),
 ]
 
 PATIENTS = [
