@@ -263,7 +263,12 @@ CREATE TABLE IF NOT EXISTS sessions_tokens (
 def init_db() -> None:
     with get_conn() as conn:
         if PG:
-            conn.execute(SCHEMA)
+            # PG: drop leftovers from failed attempts, then rebuild with BIGINT
+            # timestamps (epoch-ms overflows 32-bit INTEGER).
+            tables = re.findall(r"CREATE TABLE IF NOT EXISTS (\w+)", SCHEMA)
+            for t in tables:
+                conn.execute(f'DROP TABLE IF EXISTS "{t}" CASCADE', None)
+            conn.execute(_sql(SCHEMA).replace("INTEGER", "BIGINT"))
         else:
             conn.executescript(SCHEMA)
         row = conn.execute(_sql("SELECT COUNT(*) FROM requirement")).fetchone()
