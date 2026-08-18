@@ -1,4 +1,4 @@
-"""Demo seed. Loads the full VaniCare demo world:
+"""Demo seed. Loads the full Locutus SLP demo world:
 - 5 staff (admin, 2 therapists, 2 supervisors)
 - 7 patients / cases including the canonical Aarav Sharma journey
   (SLP-2026-001) with approved plan, 10 SOAP sessions, and a submitted

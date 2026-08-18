@@ -1,4 +1,4 @@
-# VaniCare
+# Locutus SLP
 
 Digital clinical management and supervision system for speech-language therapy.
 Built for SIH Sprint 2026 (Problem Statement PS-SW-008).
