@@ -158,7 +158,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('vanicare_token');
+    const token = localStorage.getItem('locutus_token');
     if (token) {
       load().finally(() => setBootstrapping(false));
     } else {
@@ -197,7 +197,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem('vanicare_token');
+    localStorage.removeItem('locutus_token');
     api.logout().catch(() => undefined);
     clearState();
     setBootstrapping(false);

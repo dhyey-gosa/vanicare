@@ -8,7 +8,7 @@ Built for SIH Sprint 2026 (Problem Statement PS-SW-008).
 - **Frontend** — React 18 + Vite + Tailwind (SPA, client-side routing)
 - **Backend** — FastAPI (Python 3.13) + raw-SQL data layer
 - **Database** — SQLite offline (zero-config local demo) or PostgreSQL when `DATABASE_URL` is set (hosted)
-- **Auth** — token-based sessions (`vanicare_token` in localStorage), role-gated routes (ADMIN / THERAPIST / SUPERVISOR)
+- **Auth** — token-based sessions (`locutus_token` in localStorage), role-gated routes (ADMIN / THERAPIST / SUPERVISOR)
 
 ## Features
 
@@ -40,15 +40,15 @@ npm install
 npm run dev            # http://localhost:5173
 ```
 
-## Demo accounts (fictional data, shared password `vanicare123`)
+## Demo accounts (fictional data, shared password `locutus123`)
 
 | Role       | Email               |
 |------------|---------------------|
-| Admin      | admin@vanicare.in   |
-| Therapist  | riya@vanicare.in    |
-| Therapist  | kabir@vanicare.in   |
-| Supervisor | ananya@vanicare.in  |
-| Supervisor | sen@vanicare.in     |
+| Admin      | admin@locutus.in   |
+| Therapist  | riya@locutus.in    |
+| Therapist  | kabir@locutus.in   |
+| Supervisor | ananya@locutus.in  |
+| Supervisor | sen@locutus.in     |
 
 ## Hosted (free tier)
 

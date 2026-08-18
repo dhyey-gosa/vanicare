@@ -15,8 +15,8 @@ from .routers import auth, bootstrap, cases, patients, plans, records, reports, 
 async def lifespan(_app: FastAPI):
     db.init_db()
     if seed.seed_if_empty():
-        print("[locutus-slp] Seeded demo world (users: admin@vanicare.in / riya@vanicare.in / "
-              "kabir@vanicare.in / ananya@vanicare.in / sen@vanicare.in, password: vanicare123)")
+        print("[locutus-slp] Seeded demo world (users: admin@locutus.in / riya@locutus.in / "
+              "kabir@locutus.in / ananya@locutus.in / sen@locutus.in, password: locutus123)")
     yield
 
 

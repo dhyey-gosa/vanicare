@@ -1,7 +1,7 @@
 """Dual-mode data layer: SQLite (local/offline demo) or PostgreSQL (hosted).
 
 Mode is selected once at import:
-- no  DATABASE_URL env -> SQLite file (VANICARE_DB or ./vanicare.db), unchanged offline behaviour
+- no  DATABASE_URL env -> SQLite file (LOCUTUS_DB or ./locutus.db), unchanged offline behaviour
 - set DATABASE_URL env -> PostgreSQL via psycopg (Render free tier etc.)
 
 The contract is the frontend's TypeScript types in
@@ -25,7 +25,7 @@ else:
 
     _PARAM = "?"
 
-DB_PATH = os.environ.get("VANICARE_DB", os.path.join(os.path.dirname(os.path.dirname(__file__)), "vanicare.db"))
+DB_PATH = os.environ.get("LOCUTUS_DB", os.path.join(os.path.dirname(os.path.dirname(__file__)), "locutus.db"))
 
 _SNAKE = re.compile(r"_([a-z0-9])")
 

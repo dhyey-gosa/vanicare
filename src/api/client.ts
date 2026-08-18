@@ -1,8 +1,8 @@
 /**
- * VaniCare API client — the single bridge between the frontend and the backend.
+ * Locutus SLP API client — the single bridge between the frontend and the backend.
  *
  * Base URL: VITE_API_URL env var, else http://127.0.0.1:8000 (local demo).
- * Auth: Bearer token persisted in localStorage under `vanicare_token`.
+ * Auth: Bearer token persisted in localStorage under `locutus_token`.
  */
 import type {
   Case,
@@ -23,7 +23,7 @@ import type {
 export const API_BASE: string =
   (import.meta.env?.VITE_API_URL as string | undefined) ?? 'http://127.0.0.1:8000';
 
-const TOKEN_KEY = 'vanicare_token';
+const TOKEN_KEY = 'locutus_token';
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
