@@ -9,8 +9,19 @@ router = APIRouter(prefix="/api/sessions", tags=["sessions"])
 
 
 @router.get("")
-def list_sessions():
-    return db.qa("SELECT * FROM sessions ORDER BY case_id, number")
+def list_sessions(user: dict = Depends(get_current_user)):
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return db.qa("SELECT * FROM sessions ORDER BY case_id, number")
+    if role == "THERAPIST":
+        return db.qa(
+            "SELECT s.* FROM sessions s JOIN cases c ON s.case_id = c.id "
+            "WHERE c.therapist_id = ? ORDER BY s.case_id, s.number", (uid,)
+        )
+    return db.qa(
+        "SELECT s.* FROM sessions s JOIN cases c ON s.case_id = c.id "
+        "WHERE c.supervisor_id = ? ORDER BY s.case_id, s.number", (uid,)
+    )
 
 
 def _can_write_session(user: dict, case_id: str) -> bool:

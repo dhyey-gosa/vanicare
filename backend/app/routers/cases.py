@@ -39,18 +39,38 @@ def _case(case_id: str) -> dict:
 
 
 @router.get("")
-def list_cases():
-    return db.qa("SELECT * FROM cases ORDER BY created_at")
+def list_cases(user: dict = Depends(get_current_user)):
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return db.qa("SELECT * FROM cases ORDER BY created_at")
+    if role == "THERAPIST":
+        return db.qa("SELECT * FROM cases WHERE therapist_id = ? ORDER BY created_at", (uid,))
+    return db.qa("SELECT * FROM cases WHERE supervisor_id = ? ORDER BY created_at", (uid,))
 
 
 @router.get("/{case_id}")
-def get_case(case_id: str):
-    return _case(case_id)
+def get_case(case_id: str, user: dict = Depends(get_current_user)):
+    c = _case(case_id)
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return c
+    if role == "THERAPIST" and c.get("therapistId") != uid:
+        raise HTTPException(status_code=403, detail="Not your case")
+    if role == "SUPERVISOR" and c.get("supervisorId") != uid:
+        raise HTTPException(status_code=403, detail="Not your supervised case")
+    return c
 
 
 @router.get("/{case_id}/events")
-def case_events(case_id: str):
-    _case(case_id)
+def case_events(case_id: str, user: dict = Depends(get_current_user)):
+    c = _case(case_id)
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        pass
+    elif role == "THERAPIST" and c.get("therapistId") != uid:
+        raise HTTPException(status_code=403, detail="Not your case")
+    elif role == "SUPERVISOR" and c.get("supervisorId") != uid:
+        raise HTTPException(status_code=403, detail="Not your supervised case")
     return db.qa("SELECT * FROM case_events WHERE case_id = ? ORDER BY created_at", (case_id,))
 
 

@@ -22,13 +22,34 @@ def _plan(plan_id: str) -> dict:
 
 
 @router.get("")
-def list_plans():
-    return db.qa("SELECT * FROM plans ORDER BY created_at")
+def list_plans(user: dict = Depends(get_current_user)):
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return db.qa("SELECT * FROM plans ORDER BY created_at")
+    case_ids_q = "CASE WHEN ? = 'THERAPIST' THEN therapist_id ELSE supervisor_id END"
+    if role == "THERAPIST":
+        return db.qa(
+            "SELECT p.* FROM plans p JOIN cases c ON p.case_id = c.id "
+            "WHERE c.therapist_id = ? ORDER BY p.created_at", (uid,)
+        )
+    return db.qa(
+        "SELECT p.* FROM plans p JOIN cases c ON p.case_id = c.id "
+        "WHERE c.supervisor_id = ? ORDER BY p.created_at", (uid,)
+    )
 
 
 @router.get("/{plan_id}")
-def get_plan(plan_id: str):
-    return _plan(plan_id)
+def get_plan(plan_id: str, user: dict = Depends(get_current_user)):
+    p = _plan(plan_id)
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return p
+    case = db.q("SELECT therapist_id, supervisor_id FROM cases WHERE id = ?", (p["caseId"],))
+    if role == "THERAPIST" and (not case or case.get("therapistId") != uid):
+        raise HTTPException(status_code=403, detail="Not your plan")
+    if role == "SUPERVISOR" and (not case or case.get("supervisorId") != uid):
+        raise HTTPException(status_code=403, detail="Not your supervised plan")
+    return p
 
 
 def _can_write_plan(user: dict, case_id: str) -> bool:

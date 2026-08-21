@@ -25,13 +25,33 @@ def _report(report_id: str) -> dict:
 
 
 @router.get("")
-def list_reports():
-    return db.qa("SELECT * FROM reports ORDER BY created_at")
+def list_reports(user: dict = Depends(get_current_user)):
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return db.qa("SELECT * FROM reports ORDER BY created_at")
+    if role == "THERAPIST":
+        return db.qa(
+            "SELECT r.* FROM reports r JOIN cases c ON r.case_id = c.id "
+            "WHERE c.therapist_id = ? ORDER BY r.created_at", (uid,)
+        )
+    return db.qa(
+        "SELECT r.* FROM reports r JOIN cases c ON r.case_id = c.id "
+        "WHERE c.supervisor_id = ? ORDER BY r.created_at", (uid,)
+    )
 
 
 @router.get("/{report_id}")
-def get_report(report_id: str):
-    return _report(report_id)
+def get_report(report_id: str, user: dict = Depends(get_current_user)):
+    r = _report(report_id)
+    role, uid = user["role"], user["id"]
+    if role == "ADMIN":
+        return r
+    case = db.q("SELECT therapist_id, supervisor_id FROM cases WHERE id = ?", (r["caseId"],))
+    if role == "THERAPIST" and (not case or case.get("therapistId") != uid):
+        raise HTTPException(status_code=403, detail="Not your report")
+    if role == "SUPERVISOR" and (not case or case.get("supervisorId") != uid):
+        raise HTTPException(status_code=403, detail="Not your supervised report")
+    return r
 
 
 def _can_write_report(user: dict, case_id: str) -> bool:

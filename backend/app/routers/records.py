@@ -18,8 +18,19 @@ def _record(therapist_id: str) -> dict:
 
 
 @router.get("/records")
-def list_records():
-    return db.qa("SELECT * FROM records")
+def list_records(user: dict = Depends(get_current_user)):
+    role, uid = user["role"], user["id"]
+    if role in ("ADMIN", "SUPERVISOR"):
+        return db.qa("SELECT * FROM records")
+    return db.qa("SELECT * FROM records WHERE therapist_id = ?", (uid,))
+
+
+@router.get("/records/{therapist_id}")
+def get_record(therapist_id: str, user: dict = Depends(get_current_user)):
+    role, uid = user["role"], user["id"]
+    if role == "THERAPIST" and uid != therapist_id:
+        raise HTTPException(status_code=403, detail="Can only view own record")
+    return _record(therapist_id)
 
 
 def _can_edit_record(user: dict, therapist_id: str) -> bool:
