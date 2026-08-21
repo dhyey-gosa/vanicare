@@ -1,14 +1,465 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VaniCare — Speech-Language Therapy Clinical Management &amp; Supervision</title>
-    <script type="module" crossorigin src="/assets/index-BITu-VlL.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-ZXfG3i-v.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VaniCare · Clinical supervision for speech-language therapy</title>
+<meta name="description" content="VaniCare connects student speech therapists, clinical supervisors, and programme administrators in a single supervised practice workflow.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens (mirror the VaniCare app exactly) ---------- */
+:root{
+  --ink:#0f172a;
+  --ink-soft:#475569;
+  --ink-faint:#94a3b8;
+  --bg:#f6f7f9;
+  --card:#ffffff;
+  --line:#e2e8f0;
+  --teal:#0d7f79;          /* clinical accent, locked */
+  --teal-strong:#0a6560;
+  --teal-soft:#eaf6f5;
+  --teal-border:#b3ddda;
+  --navy:#1f3a5f;          /* admin */
+  --navy-strong:#152b47;
+  --indigo:#4b46b8;        /* supervisor */
+  --indigo-soft:#f0effb;
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --ease:cubic-bezier(.32,.72,0,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;overflow-x:hidden;
+}
+.serif{font-family:'Newsreader',Georgia,serif;font-weight:500}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+a{color:inherit;text-decoration:none}
+
+/* ---------- Reveal motion ---------- */
+.rv{opacity:0;transform:translateY(26px);filter:blur(6px);
+    transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)}
+.rv.in{opacity:1;transform:none;filter:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;filter:none;transition:none}
+  .float{animation:none!important}
+}
+
+/* ---------- Nav : floating island ---------- */
+nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:40;
+    display:flex;align-items:center;gap:26px;
+    background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(15,23,42,.07);border-radius:999px;
+    padding:9px 10px 9px 20px;box-shadow:0 12px 34px -18px rgba(15,23,42,.22)}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+.brand .mark{width:26px;height:26px;border-radius:8px;background:var(--teal);display:grid;place-items:center;flex:none}
+.brand .mark svg{width:14px;height:14px;stroke:#fff}
+.navlinks{display:flex;gap:22px;font-size:13.5px;color:var(--ink-soft);font-weight:500}
+.navlinks a{transition:color .25s var(--ease)}
+.navlinks a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:999px;font-weight:600;
+     cursor:pointer;border:none;font-family:inherit;transition:transform .35s var(--ease),background .35s var(--ease),box-shadow .35s var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--teal);color:#fff;padding:11px 8px 11px 20px;font-size:14px;
+             box-shadow:0 10px 24px -12px rgba(13,127,121,.55)}
+.btn-primary:hover{background:var(--teal-strong)}
+.btn-primary .chip{width:30px;height:30px;border-radius:999px;background:rgba(255,255,255,.16);
+                   display:grid;place-items:center;transition:transform .35s var(--ease)}
+.btn-primary:hover .chip{transform:translate(2px,-2px)}
+.btn-primary .chip svg{width:13px;height:13px;stroke:#fff}
+.btn-sm{padding:8px 6px 8px 16px;font-size:13px}
+.btn-sm .chip{width:26px;height:26px}
+.btn-ghost{background:transparent;color:var(--ink);padding:11px 18px;font-size:14px;
+           border:1px solid var(--line);background:var(--card)}
+.btn-ghost:hover{border-color:var(--ink-faint)}
+
+/* ---------- Hero ---------- */
+.hero{min-height:100dvh;display:flex;align-items:center;position:relative;
+      padding:140px 0 90px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(52rem 34rem at 86% 8%,rgba(13,127,121,.09),transparent 62%),
+             radial-gradient(40rem 28rem at -8% 96%,rgba(31,58,95,.06),transparent 60%)}
+.hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+           gap:56px;align-items:center;width:100%}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;
+      padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+      background:var(--teal-soft);color:var(--teal-strong);border:1px solid var(--teal-border)}
+.pill .dot{width:6px;height:6px;border-radius:99px;background:var(--teal);animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(13,127,121,.35)}50%{box-shadow:0 0 0 5px rgba(13,127,121,0)}}
+h1{font-family:'Newsreader',serif;font-weight:500;font-size:clamp(34px,3.5vw,50px);
+   line-height:1.06;letter-spacing:-.02em;margin:22px 0 20px;color:var(--ink)}
+h1 em{font-style:italic;color:var(--teal-strong)}
+.sub{font-size:17px;color:var(--ink-soft);max-width:44ch;line-height:1.65}
+.cta-row{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap}
+.hero-meta{margin-top:34px;display:flex;gap:22px;align-items:center;
+           font-size:12.5px;color:var(--ink-faint)}
+.hero-meta span{display:flex;align-items:center;gap:7px}
+.hero-meta svg{width:14px;height:14px;stroke:var(--teal)}
+
+/* ---------- App preview : double-bezel ---------- */
+.bezel{background:rgba(15,23,42,.045);border:1px solid rgba(15,23,42,.08);
+       border-radius:var(--radius-xl);padding:10px;
+       box-shadow:0 40px 80px -40px rgba(15,23,42,.3)}
+.screen{background:var(--card);border-radius:calc(var(--radius-xl) - 8px);overflow:hidden;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(15,23,42,.05)}
+.chrome{display:flex;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid var(--line);background:#fbfcfd}
+.chrome i{width:10px;height:10px;border-radius:99px;background:#e2e8f0}
+.chrome i:first-child{background:#f3c1b8}.chrome i:nth-child(2){background:#f2ddba}.chrome i:nth-child(3){background:#bfe3cf}
+.chrome .url{flex:1;margin-left:8px;background:#fff;border:1px solid var(--line);border-radius:8px;
+             padding:4px 12px;font-size:11px;color:var(--ink-faint)}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;color:#fff;
+        background:linear-gradient(120deg,var(--teal) 0%,#0e8a83 100%)}
+.appbar .l{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13px}
+.appbar .l .m{width:22px;height:22px;border-radius:7px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.appbar .r{display:flex;align-items:center;gap:10px;font-size:11px;opacity:.85}
+.appbar .avatar{width:24px;height:24px;border-radius:99px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-weight:700;font-size:10px}
+.appbody{padding:20px;background:#f8fafc}
+.greet{font-family:'Newsreader',serif;font-size:19px;font-weight:500}
+.greet small{display:block;font-family:'Inter';font-size:11px;color:var(--ink-faint);margin-top:2px;font-style:normal}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px}
+.tile .k{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)}
+.tile .v{font-family:'Newsreader',serif;font-size:24px;margin-top:5px;line-height:1}
+.tile .v.accent{color:var(--teal)}
+.tile .h{height:4px;border-radius:99px;background:#eef2f6;margin-top:10px;overflow:hidden}
+.tile .h i{display:block;height:100%;border-radius:99px;background:var(--teal)}
+.cases{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
+.cases .row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;font-size:12px}
+.cases .row+.row{border-top:1px solid var(--line)}
+.cases .who{display:flex;align-items:center;gap:10px;font-weight:600}
+.cases .ini{width:26px;height:26px;border-radius:99px;display:grid;place-items:center;font-size:10px;font-weight:700}
+.status{font-size:10px;font-weight:600;padding:4px 10px;border-radius:99px}
+.s-teal{background:var(--teal-soft);color:var(--teal-strong)}
+.s-indigo{background:var(--indigo-soft);color:var(--indigo)}
+.s-slate{background:#f1f5f9;color:var(--ink-soft)}
+.float{animation:floaty 7s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* ---------- Sections base ---------- */
+section{padding:104px 0}
+.sec-head{max-width:56ch;margin-bottom:56px}
+h2{font-family:'Newsreader',serif;font-weight:500;font-size:clamp(28px,3.2vw,42px);
+   line-height:1.12;letter-spacing:-.015em}
+h2 em{font-style:italic;color:var(--teal-strong)}
+.sec-head p{margin-top:14px;color:var(--ink-soft);font-size:16px;line-height:1.65}
+
+/* ---------- Roles bento ---------- */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.role-card{border-radius:var(--radius-lg);padding:30px;position:relative;overflow:hidden;
+           display:flex;flex-direction:column;min-height:300px}
+.role-card .rc-tag{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.role-card h3{font-family:'Newsreader',serif;font-weight:500;font-size:26px;margin-top:8px}
+.role-card ul{list-style:none;margin-top:auto;padding-top:26px;display:flex;flex-direction:column;gap:9px}
+.role-card li{display:flex;gap:9px;font-size:13.5px;align-items:flex-start;line-height:1.45}
+.role-card li svg{width:15px;height:15px;flex:none;margin-top:2px}
+.rc-admin{grid-column:span 7;background:linear-gradient(150deg,var(--navy) 0%,var(--navy-strong) 100%);color:#fff}
+.rc-admin li svg{stroke:#8fb3d9}
+.rc-admin .glyph{position:absolute;right:-30px;top:-30px;width:190px;height:190px;border-radius:50%;
+                 border:1px solid rgba(255,255,255,.12)}
+.rc-admin .glyph::after{content:"";position:absolute;inset:36px;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.rc-therapist{grid-column:span 5;background:linear-gradient(160deg,var(--teal) 0%,var(--teal-strong) 100%);color:#fff}
+.rc-therapist li svg{stroke:#a6dcd8}
+.rc-sup{grid-column:span 12;background:var(--card);border:1px solid var(--line);
+        display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;min-height:0}
+.rc-sup h3{color:var(--ink)}
+.rc-sup .tag-indigo{color:var(--indigo)}
+.rc-sup ul{margin:0;padding-top:24px}
+.rc-sup li svg{stroke:var(--indigo)}
+.rc-sup li{color:var(--ink-soft)}
+.sup-panel{background:var(--indigo-soft);border:1px solid #dedbf5;border-radius:var(--radius-md);
+           padding:20px 22px;min-width:290px}
+.sup-panel .sp-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:12.5px}
+.sup-panel .sp-row+.sp-row{border-top:1px dashed #d5d2f0}
+.sp-name{font-weight:600;display:flex;gap:9px;align-items:center}
+.sp-name .ini{width:24px;height:24px;border-radius:99px;background:#fff;color:var(--indigo);
+              display:grid;place-items:center;font-size:9px;font-weight:700}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px}
+.b-wait{background:#fdf2df;color:#96691a}
+.b-rev{background:var(--indigo-soft);color:var(--indigo)}
+.b-ok{background:#e5f4ec;color:#177a48}
+
+/* ---------- Demo accounts ---------- */
+.demo{background:#fbfcfd;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:64px 0}
+.demo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:30px}
+.demo-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:16px;
+           transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.demo-card:hover{border-color:var(--teal-border);transform:translateY(-3px)}
+.demo-card .role{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.demo-card .email{font-size:12px;color:var(--ink-soft);margin-top:7px;word-break:break-all}
+.demo-note{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink-soft);
+           margin-top:18px;background:#fff;border:1px dashed var(--line);border-radius:10px;
+           display:inline-block;padding:9px 16px}
+.demo-note b{color:var(--teal-strong);font-weight:600}
+
+/* ---------- Workflow ---------- */
+.flow{border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:110px minmax(0,4fr) minmax(0,7fr);gap:28px;
+      padding:34px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.step .n{font-family:'Newsreader',serif;font-style:italic;font-size:34px;color:var(--teal);line-height:1}
+.step h4{font-size:19px;font-weight:600;letter-spacing:-.01em}
+.step p{color:var(--ink-soft);font-size:14.5px;line-height:1.65}
+.step .actor{margin-top:10px;display:inline-flex;font-size:11px;font-weight:600;padding:4px 11px;border-radius:99px}
+
+/* ---------- Stats band (dark) ---------- */
+.band{background:radial-gradient(60rem 30rem at 78% -10%,rgba(75,70,184,.22),transparent 60%),var(--navy-strong);
+      color:#fff;padding:110px 0}
+.band h2{color:#fff;max-width:22ch}
+.band h2 em{color:#8fd4cf}
+.band .sec-head p{color:#b6c4d6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.1);
+       border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);overflow:hidden;margin-top:54px}
+.stat{background:var(--navy-strong);padding:34px 30px}
+.stat .v{font-family:'Newsreader',serif;font-size:clamp(34px,3.4vw,46px);line-height:1;color:#8fd4cf}
+.stat .k{margin-top:12px;font-size:13px;color:#b6c4d6;line-height:1.5}
+
+/* ---------- Final CTA + footer ---------- */
+.final{text-align:center;padding:130px 0 110px}
+.final h2{font-size:clamp(32px,4vw,52px);max-width:20ch;margin:0 auto}
+.final .cta-row{justify-content:center;margin-top:38px}
+footer{border-top:1px solid var(--line);padding:36px 0;font-size:13px;color:var(--ink-faint)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot .handles{display:flex;gap:16px;flex-wrap:wrap}
+.foot a:hover{color:var(--teal-strong)}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1023px){
+  .hero-grid{grid-template-columns:1fr;gap:48px}
+  .sub{max-width:56ch}
+  .rc-admin{grid-column:span 12}
+  .rc-therapist{grid-column:span 12}
+  .rc-sup{grid-template-columns:1fr}
+  .sup-panel{min-width:0}
+  .demo-grid{grid-template-columns:repeat(2,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .step{grid-template-columns:64px 1fr;gap:16px}
+  .step p{grid-column:2}
+}
+@media(max-width:640px){
+  .navlinks{display:none}
+  nav{gap:14px;padding-left:16px}
+  section{padding:76px 0}
+  .tiles{grid-template-columns:1fr 1fr}
+  .tile:nth-child(3){display:none}
+  .demo-grid{grid-template-columns:1fr}
+  .step{grid-template-columns:1fr}
+  .step p{grid-column:1}
+  .hero{padding-top:120px}
+}
+</style>
+</head>
+<body>
+
+<nav class="rv" id="nav">
+  <a class="brand" href="#top">
+    <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M3 12h4l2.5-7 4 14L16 12h5"/></svg></span>
+    VaniCare
+  </a>
+  <div class="navlinks">
+    <a href="#roles">Roles</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#demo">Demo</a>
+  </div>
+  <a class="btn btn-primary btn-sm" href="/app" target="_blank" rel="noopener">
+    Open the app
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+  </a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill rv"><span class="dot"></span>Smart India Hackathon 2026</span>
+      <h1 class="rv">Clinical supervision, finally in <em>one place.</em></h1>
+      <p class="sub rv">VaniCare connects student speech therapists, supervisors, and programme admins in a single supervised practice workflow.</p>
+      <div class="cta-row rv">
+        <a class="btn btn-primary" href="/app" target="_blank" rel="noopener">
+          Launch the live demo
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="btn btn-ghost" href="#demo">Demo logins</a>
+      </div>
+      <div class="hero-meta rv">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Role-based access</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Live plan reviews</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Clinical hour tracking</span>
+      </div>
+    </div>
+
+    <div class="bezel rv float" aria-hidden="true">
+      <div class="screen">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">vanicare-web.onrender.com</span></div>
+        <div class="appbar">
+          <div class="l"><span class="m"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h4l2.5-7 4 14L16 12h5"/></svg></span>VaniCare<span style="font-weight:400;opacity:.75;font-size:11px">· Clinical Practice</span></div>
+          <div class="r">Riya Sharma<span class="avatar">R</span></div>
+        </div>
+        <div class="appbody">
+          <div class="greet">Good morning, Riya<small>Tuesday · 3 active cases · next session at 11:00</small></div>
+          <div class="tiles">
+            <div class="tile"><div class="k">Active cases</div><div class="v num">3</div></div>
+            <div class="tile"><div class="k">Clinical hours</div><div class="v num accent">42.5<span style="font-size:13px;color:var(--ink-faint)"> / 60</span></div>
+              <div class="h"><i style="width:71%"></i></div></div>
+            <div class="tile"><div class="k">Plans awaiting review</div><div class="v num">2</div></div>
+          </div>
+          <div class="cases">
+            <div class="row"><span class="who"><span class="ini" style="background:var(--teal-soft);color:var(--teal-strong)">AS</span>Aarav S. · Fluency</span><span class="status s-teal">Session logged</span></div>
+            <div class="row"><span class="who"><span class="ini" style="background:var(--indigo-soft);color:var(--indigo)">PM</span>Priya M. · Articulation</span><span class="status s-indigo">Plan in review</span></div>
+            <div class="row"><span class="who"><span class="ini" style="background:#f1f5f9;color:var(--ink-soft)">RD</span>Rohan D. · Voice</span><span class="status s-slate">Report due Fri</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="roles">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>One platform, <em>three chairs.</em></h2>
+      <p>Every screen adapts to who is sitting in front of it. The same case reads differently for an administrator, a student therapist, and a supervisor.</p>
+    </div>
+    <div class="bento">
+      <article class="role-card rc-admin rv">
+        <span class="glyph"></span>
+        <span class="rc-tag">Administration</span>
+        <h3>Run the clinic</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Register patients and open cases in seconds</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Allocate cases to therapists with one decision view</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Clinic-wide analytics across cases, hours, and outcomes</li>
+        </ul>
+      </article>
+      <article class="role-card rc-therapist rv">
+        <span class="rc-tag">Student Therapist</span>
+        <h3>Practice safely</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Draft therapy plans against case requirements</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Log sessions and track clinical hours live</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Submit progress reports for evaluation</li>
+        </ul>
+      </article>
+      <article class="role-card rc-sup rv">
+        <div>
+          <span class="rc-tag tag-indigo">Clinical Supervision</span>
+          <h3>Supervise everything</h3>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve or return therapy plans with structured feedback</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Evaluate progress reports against competencies</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Monitor caseload health across every supervisee</li>
+          </ul>
+        </div>
+        <div class="sup-panel" aria-hidden="true">
+          <div class="sp-row"><span class="sp-name"><span class="ini">RS</span>Plan · Aarav S.</span><span class="badge b-rev">In review</span></div>
+          <div class="sp-row"><span class="sp-name"><span class="ini">KD</span>Plan · Dev K.</span><span class="badge b-wait">Returned</span></div>
+          <div class="sp-row"><span class="sp-name"><span class="ini">NM</span>Report · Nisha M.</span><span class="badge b-ok">Evaluated</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="demo" id="demo">
+  <div class="wrap">
+    <div class="sec-head rv" style="margin-bottom:0">
+      <h2>Judge it yourself.</h2>
+      <p>The app is fully deployed with seeded clinical data. Sign in as any role and click through the entire workflow.</p>
+    </div>
+    <div class="demo-grid rv">
+      <a class="demo-card" href="/app" target="_blank" rel="noopener"><div class="role" style="color:var(--navy)">Admin</div><div class="email">admin@vanicare.in</div></a>
+      <a class="demo-card" href="/app" target="_blank" rel="noopener"><div class="role" style="color:var(--teal-strong)">Therapist</div><div class="email">riya@vanicare.in</div></a>
+      <a class="demo-card" href="/app" target="_blank" rel="noopener"><div class="role" style="color:var(--teal-strong)">Therapist</div><div class="email">kabir@vanicare.in</div></a>
+      <a class="demo-card" href="/app" target="_blank" rel="noopener"><div class="role" style="color:var(--indigo)">Supervisor</div><div class="email">sen@vanicare.in</div></a>
+      <a class="demo-card" href="/app" target="_blank" rel="noopener"><div class="role" style="color:var(--indigo)">Supervisor</div><div class="email">ananya@vanicare.in</div></a>
+    </div>
+    <div class="demo-note rv">password for every account: <b>vanicare123</b></div>
+  </div>
+</section>
+
+<section id="workflow">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>A case, from allocation<br>to <em>closing report.</em></h2>
+    </div>
+    <div class="flow">
+      <div class="step rv">
+        <span class="n num">01</span>
+        <div><h4>Case allocated</h4><span class="actor" style="background:#eef2f7;color:var(--navy)">Administrator</span></div>
+        <p>An admin registers the patient, opens a case with its disorder profile and required clinical hours, and assigns it to a student therapist.</p>
+      </div>
+      <div class="step rv">
+        <span class="n num">02</span>
+        <div><h4>Plan drafted</h4><span class="actor" style="background:var(--teal-soft);color:var(--teal-strong)">Therapist</span></div>
+        <p>The therapist studies the case, drafts a therapy plan with goals and session structure, and submits it before touching a single session.</p>
+      </div>
+      <div class="step rv">
+        <span class="n num">03</span>
+        <div><h4>Plan reviewed</h4><span class="actor" style="background:var(--indigo-soft);color:var(--indigo)">Supervisor</span></div>
+        <p>The supervisor approves the plan or returns it with feedback. Nothing moves forward until a qualified clinician signs off.</p>
+      </div>
+      <div class="step rv">
+        <span class="n num">04</span>
+        <div><h4>Sessions logged</h4><span class="actor" style="background:var(--teal-soft);color:var(--teal-strong)">Therapist</span></div>
+        <p>Every session is recorded against the approved plan. Clinical hours accumulate automatically toward the requirement.</p>
+      </div>
+      <div class="step rv" style="border-bottom:none">
+        <span class="n num">05</span>
+        <div><h4>Report evaluated</h4><span class="actor" style="background:var(--indigo-soft);color:var(--indigo)">Supervisor</span></div>
+        <p>The therapist closes the loop with a progress report. The supervisor evaluates outcomes, and the case is ready to close with a complete audit trail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>Built like a product,<br>not a <em>prototype.</em></h2>
+      <p>Deployed end to end on managed cloud infrastructure with a real database, real authentication, and real role enforcement on every endpoint.</p>
+    </div>
+    <div class="stats rv">
+      <div class="stat"><div class="v num">3</div><div class="k">distinct clinical roles, each with its own interface and permissions</div></div>
+      <div class="stat"><div class="v num">6</div><div class="k">stage workflow enforced in software: allocate, plan, review, treat, report, evaluate</div></div>
+      <div class="stat"><div class="v num">100%</div><div class="k">of API endpoints authenticated with JWT and filtered by role server-side</div></div>
+      <div class="stat"><div class="v num">2</div><div class="k">services live in production: FastAPI backend and React frontend on Render with PostgreSQL</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2 class="rv serif">Speech therapy training deserves better software.</h2>
+    <div class="cta-row rv">
+      <a class="btn btn-primary" href="/app" target="_blank" rel="noopener">
+        Open VaniCare
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>VaniCare · Smart India Hackathon 2026</span>
+    <div class="handles">
+      <a href="https://github.com/dhyey-gosa/vanicare" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/dhyey-gosa" target="_blank" rel="noopener">dhyey-gosa</a>
+      <a href="https://github.com/meet3030" target="_blank" rel="noopener">meet3030</a>
+      <a href="https://github.com/sleepydhwanii" target="_blank" rel="noopener">sleepydhwanii</a>
+      <a href="https://github.com/Arpan797" target="_blank" rel="noopener">Arpan797</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=`${Math.min((i%6)*70,420)}ms`;io.observe(el)});
+</script>
+</body>
 </html>
