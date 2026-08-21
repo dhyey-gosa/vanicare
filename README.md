@@ -1,66 +1,89 @@
 # VaniCare
 
-Digital clinical management and supervision system for speech-language therapy.
-Built for SIH Sprint 2026 (Problem Statement PS-SW-008).
+Speech-language therapy clinical management and supervision platform. Built for SIH Sprint 2026 (PS-SW-008).
+
+## What it does
+
+Handles the day-to-day workflow of an SLP clinic — patient intake, case allocation, therapy planning, session documentation, progress tracking, and supervisor oversight. Everything is role-based so therapists, supervisors, and administrators each see what they need.
+
+**Core features:**
+
+- Patient registration with medical history and referral details
+- Case management with therapist + supervisor assignment
+- Therapy plan creation with a submit-review-approve workflow
+- SOAP session notes with goal scoring on a 1–5 clinical scale
+- Progress reports auto-drafted from session data, reviewed by supervisors
+- Case outcome decisions (continue, close, discontinue) with a full audit trail
+- Hours and competency tracking against supervision requirements
+- Analytics across the practice
 
 ## Stack
 
-- **Frontend** — React 18 + Vite + Tailwind (SPA, client-side routing)
-- **Backend** — FastAPI (Python 3.13) + raw-SQL data layer
-- **Database** — SQLite offline (zero-config local demo) or PostgreSQL when `DATABASE_URL` is set (hosted)
-- **Auth** — token-based sessions (`vanicare_token` in localStorage), role-gated routes (ADMIN / THERAPIST / SUPERVISOR)
+| Layer | Tech |
+|-------|------|
+| Frontend | React 18, Vite, Tailwind CSS |
+| Backend | FastAPI (Python) with raw SQL |
+| Database | SQLite (local) / PostgreSQL (hosted) |
+| Auth | JWT tokens, role-based access control |
+| Hosting | Render free tier (auto-deploy from main) |
 
-## Features
+## Running locally
 
-- Patient registration and case intake (priority, diagnosis, referral)
-- Two-person allocation: every case gets a therapist + a supervisor
-- Therapy planning with supervisor review loop (submit → approve / request changes → resubmit)
-- SOAP session documentation with goal scoring on a 1–5 clinical scale
-- Longitudinal progress charts and SLP outcome profile (radar)
-- Auto-generated progress report draft from session data, with a clinician-verification safeguard
-- Supervisor evaluation with case outcome state machine (Continue Therapy / Close Case / Discontinue Case)
-- Case timeline (full audit trail) and per-user notifications
-- Hours & competency tracking against SIH-style supervision requirements
-- Analytics across the whole practice
+**Backend:**
 
-## Run locally (offline, zero config)
-
-Backend:
-
-```
+```bash
 cd backend
 pip install -r requirements.txt
-python run.py          # seeds the demo world on first boot
+python run.py
 ```
 
-Frontend:
+Seeds demo data on first run. Starts on `http://localhost:8000`.
 
-```
+**Frontend:**
+
+```bash
 npm install
-npm run dev            # http://localhost:5173
+npm run dev
 ```
 
-## Demo accounts (fictional data, shared password `vanicare123`)
+Opens at `http://localhost:5173`.
 
-| Role       | Email               |
-|------------|---------------------|
-| Admin      | admin@vanicare.in   |
-| Therapist  | riya@vanicare.in    |
-| Therapist  | kabir@vanicare.in   |
-| Supervisor | ananya@vanicare.in  |
-| Supervisor | sen@vanicare.in     |
+## Demo accounts
 
-## Hosted (free tier)
+All accounts use password: `vanicare123`
 
-- Web: https://vanicare-web.onrender.com
-- API: https://vanicare-api.onrender.com
+| Role | Email |
+|------|-------|
+| Admin | admin@vanicare.in |
+| Therapist | riya@vanicare.in |
+| Therapist | kabir@vanicare.in |
+| Supervisor | ananya@vanicare.in |
+| Supervisor | sen@vanicare.in |
 
-## Project layout
+## Hosted
+
+- https://vanicare-web.onrender.com
+- https://vanicare-api.onrender.com
+
+## Project structure
 
 ```
-├── src/            # React frontend (repo root)
-├── backend/        # FastAPI application
-│   ├── app/        # db, seed, security, routers
-│   └── tests/      # pytest suite (8 tests)
-└── DEMO_SCRIPT.md  # 12-scene demo walkthrough
+src/                    # React frontend
+  pages/                # Route-level components (admin/, therapist/, supervisor/, shared/)
+  components/           # Reusable UI and feature components
+  contexts/             # AppContext (server-backed state)
+  api/                  # API client
+  types/                # TypeScript interfaces
+backend/
+  app/
+    routers/            # FastAPI route handlers
+    db.py               # Dual-mode data layer (SQLite/PostgreSQL)
+    seed.py             # Demo data seeder
+    deps.py             # Auth dependencies
+    schemas.py          # Request/response models
+  tests/                # pytest suite
 ```
+
+## License
+
+Built for SIH Sprint 2026.
