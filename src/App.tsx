@@ -23,17 +23,46 @@ import { CompetenciesPage } from './pages/shared/CompetenciesPage';
 import { ClosedCasesPage } from './pages/shared/ClosedCasesPage';
 import { HOME_FOR } from './utils/nav';
 
+const DEMO_PASSWORD = 'vanicare123';
+
+function DemoSigningIn() {
+  return (
+    <div className="flex min-h-full w-full items-center justify-center bg-white">
+      <div className="flex flex-col items-center gap-3 text-slate-500">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-500" />
+        <p className="text-sm">Signing in to the demo account…</p>
+      </div>
+    </div>
+  );
+}
+
 function Landing() {
-  const { currentUser, bootstrapping } = useApp();
+  const { currentUser, bootstrapping, login } = useApp();
+  const [demoAttempted, setDemoAttempted] = React.useState(false);
+  const [demoFailed, setDemoFailed] = React.useState(false);
+  const demoEmail = React.useMemo(
+    () => new URLSearchParams(window.location.search).get('demo'),
+    []
+  );
+
+  React.useEffect(() => {
+    if (bootstrapping || currentUser || !demoEmail || demoAttempted) return;
+    setDemoAttempted(true);
+    login(demoEmail, DEMO_PASSWORD).then((result) => {
+      if (!result.ok) setDemoFailed(true);
+    });
+  }, [bootstrapping, currentUser, demoEmail, demoAttempted, login]);
+
   if (bootstrapping) return null;
   if (currentUser) return <Navigate to={HOME_FOR[currentUser.role]} replace />;
+  if (demoEmail && !demoFailed) return <DemoSigningIn />;
   return <Auth />;
 }
 
 export function App() {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/app">
         <Toaster position="top-right" richColors />
         <Routes>
           <Route path="/" element={<Landing />} />
