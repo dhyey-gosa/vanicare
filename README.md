@@ -2,7 +2,7 @@
 
 Speech-language therapy clinical management and supervision platform. Built for SIH Sprint 2026 (PS-SW-008).
 
-#### What it does
+##What it does
 
 Handles the day-to-day workflow of an SLP clinic — patient intake, case allocation, therapy planning, session documentation, progress tracking, and supervisor oversight. Everything is role-based so therapists, supervisors, and administrators each see what they need.
 
