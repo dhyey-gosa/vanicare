@@ -25,6 +25,14 @@ import type {
 import { COMPETENCY_AREAS } from '../types';
 import { api, ApiError } from '../api/client';
 
+const SUPPRESSED_ERROR_DETAILS = new Set(['Not allowed for this role']);
+
+function notifyError(err: unknown, fallback: string): void {
+  const detail = err instanceof ApiError ? err.detail : undefined;
+  if (detail && SUPPRESSED_ERROR_DETAILS.has(detail)) return;
+  toast.error(detail ?? fallback);
+}
+
 interface AppState {
   users: User[];
   currentUser: User | null;
@@ -209,7 +217,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       .createPatient(input)
       .then((patient) => setPatients((prev) => upsert(prev, patient)))
       .catch((err) => {
-        toast.error(err instanceof ApiError ? err.detail : 'Could not register the patient.');
+        notifyError(err,'Could not register the patient.');
         setPatients((prev) => prev.filter((p) => p.id !== optimistic.id));
       });
     return optimistic;
@@ -225,7 +233,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     api
       .allocateCase(caseId, therapistId, supervisorId)
       .then((updated) => setCases((prev) => upsert(prev, updated)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Allocation failed.'));
+      .catch((err) => notifyError(err,'Allocation failed.'));
   }, []);
 
   const savePlan: AppContextValue['savePlan'] = useCallback((input) => {
@@ -238,7 +246,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     api
       .savePlan(input)
       .then((plan) => setPlans((prev) => upsert(prev, plan)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not save the plan.'));
+      .catch((err) => notifyError(err,'Could not save the plan.'));
     return optimistic;
   }, []);
 
@@ -246,14 +254,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     api
       .reviewPlan(planId, approve, feedback)
       .then((plan) => setPlans((prev) => upsert(prev, plan)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not review the plan.'));
+      .catch((err) => notifyError(err,'Could not review the plan.'));
   }, []);
 
   const saveSession: AppContextValue['saveSession'] = useCallback((input) => {
     api
       .saveSession(input)
       .then((session) => setSessions((prev) => upsert(prev, session)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not save the session.'));
+      .catch((err) => notifyError(err,'Could not save the session.'));
   }, []);
 
   const saveReport: AppContextValue['saveReport'] = useCallback((input) => {
@@ -266,7 +274,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     api
       .saveReport(input)
       .then((report) => setReports((prev) => upsert(prev, report)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not save the report.'));
+      .catch((err) => notifyError(err,'Could not save the report.'));
     return optimistic;
   }, []);
 
@@ -279,7 +287,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return api.fetchCases();
       })
       .then((latest) => setCases(latest))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not evaluate the report.'));
+      .catch((err) => notifyError(err,'Could not evaluate the report.'));
   }, []);
 
   const usersByRole = useCallback((role: Role) => users.filter((u) => u.role === role), [users]);
@@ -315,28 +323,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     api
       .updateRecord(therapistId, patch)
       .then((record) => setRecords((prev) => upsert(prev, record)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not update the record.'));
+      .catch((err) => notifyError(err,'Could not update the record.'));
   }, []);
 
   const setCompetency: AppContextValue['setCompetency'] = useCallback((therapistId, area, status) => {
     api
       .setCompetency(therapistId, area, status)
       .then((record) => setRecords((prev) => upsert(prev, record)))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not update the competency.'));
+      .catch((err) => notifyError(err,'Could not update the competency.'));
   }, []);
 
   const setRequirement: AppContextValue['setRequirement'] = useCallback((req) => {
     api
       .setRequirement(req)
       .then((saved) => setRequirementState(saved))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not save the requirement.'));
+      .catch((err) => notifyError(err,'Could not save the requirement.'));
   }, []);
 
   const markAllNotificationsRead: AppContextValue['markAllNotificationsRead'] = useCallback(() => {
     api
       .readAllNotifications()
       .then(() => setNotifications((prev) => prev.map((n) => ({ ...n, read: true }))))
-      .catch((err) => toast.error(err instanceof ApiError ? err.detail : 'Could not update notifications.'));
+      .catch((err) => notifyError(err,'Could not update notifications.'));
   }, []);
 
   const value = useMemo<AppContextValue>(
